@@ -12,4 +12,6 @@
 
 - (void)displayImage:(UIImage *)image;
 
+- (UIImage *)capture;
+
 @end

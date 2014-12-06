@@ -55,6 +55,16 @@
     self.imageView.frame = frameToCenter;
 }
 
+- (UIImage *)capture {
+    UIGraphicsBeginImageContextWithOptions(self.frame.size, NO, [UIScreen mainScreen].scale);
+    
+    [self drawViewHierarchyInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height) afterScreenUpdates:YES];
+    
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return image;
+}
+
 - (void)displayImage:(UIImage *)image
 {
     // clear the previous image
