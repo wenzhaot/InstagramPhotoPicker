@@ -141,6 +141,12 @@
         dragView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [self.topView addSubview:dragView];
         
+        UIImage *img = [UIImage imageNamed:@"cameraroll-picker-grip"];
+        rect = CGRectMake((CGRectGetWidth(dragView.bounds)-img.size.width)/2, (CGRectGetHeight(dragView.bounds)-img.size.height)/2, img.size.width, img.size.height);
+        UIImageView *gripView = [[UIImageView alloc] initWithFrame:rect];
+        gripView.image = img;
+        [dragView addSubview:gripView];
+        
         UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureAction:)];
         [dragView addGestureRecognizer:panGesture];
         
