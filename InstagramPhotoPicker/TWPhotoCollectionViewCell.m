@@ -23,7 +23,7 @@
 - (void)setSelected:(BOOL)selected {
     [super setSelected:selected];
     
-    self.imageView.layer.borderWidth = selected ? 1 : 0;
+    self.imageView.layer.borderWidth = selected ? 2 : 0;
 }
 
 @end

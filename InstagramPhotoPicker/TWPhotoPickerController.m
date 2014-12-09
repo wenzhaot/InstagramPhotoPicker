@@ -16,6 +16,7 @@
     CGFloat beginOriginY;
 }
 @property (strong, nonatomic) UIView *topView;
+@property (strong, nonatomic) UIImageView *maskView;
 @property (strong, nonatomic) TWImageScrollView *imageScrollView;
 
 @property (strong, nonatomic) NSMutableArray *assets;
@@ -106,25 +107,33 @@
         self.topView.clipsToBounds = YES;
         
         rect = CGRectMake(0, 0, CGRectGetWidth(self.topView.bounds), handleHeight);
-        UIView *navView = [[UIView alloc] initWithFrame:rect];
-        navView.backgroundColor = [[UIColor darkGrayColor] colorWithAlphaComponent:.8f];
+        UIView *navView = [[UIView alloc] initWithFrame:rect];//26 29 33
+        navView.backgroundColor = [[UIColor colorWithRed:26.0/255 green:29.0/255 blue:33.0/255 alpha:1] colorWithAlphaComponent:.8f];
         [self.topView addSubview:navView];
         
-        rect = CGRectMake(0, 0, 80, CGRectGetHeight(navView.bounds));
+        rect = CGRectMake(0, 0, 60, CGRectGetHeight(navView.bounds));
         UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         backBtn.frame = rect;
-        [backBtn setTitle:@"Back" forState:UIControlStateNormal];
+        [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
         [navView addSubview:backBtn];
         
         rect = CGRectMake((CGRectGetWidth(navView.bounds)-100)/2, 0, 100, CGRectGetHeight(navView.bounds));
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:rect];
-        titleLabel.text = @"选择";
+        titleLabel.text = @"SELECT";
         titleLabel.textAlignment = NSTextAlignmentCenter;
         titleLabel.backgroundColor = [UIColor clearColor];
         titleLabel.textColor = [UIColor whiteColor];
         titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
         [navView addSubview:titleLabel];
+        
+        rect = CGRectMake(CGRectGetWidth(navView.bounds)-80, 0, 80, CGRectGetHeight(navView.bounds));
+        UIButton *cropBtn = [[UIButton alloc] initWithFrame:rect];
+        [cropBtn setTitle:@"OK" forState:UIControlStateNormal];
+        [cropBtn.titleLabel setFont:[UIFont systemFontOfSize:14.0f]];
+        [cropBtn setTitleColor:[UIColor cyanColor] forState:UIControlStateNormal];
+        [cropBtn addTarget:self action:@selector(cropAction) forControlEvents:UIControlEventTouchUpInside];
+        [navView addSubview:cropBtn];
         
         rect = CGRectMake(0, CGRectGetHeight(self.topView.bounds)-handleHeight, CGRectGetWidth(self.topView.bounds), handleHeight);
         UIView *dragView = [[UIView alloc] initWithFrame:rect];
@@ -144,32 +153,62 @@
         self.imageScrollView = [[TWImageScrollView alloc] initWithFrame:rect];
         [self.topView addSubview:self.imageScrollView];
         [self.topView sendSubviewToBack:self.imageScrollView];
+        
+        self.maskView = [[UIImageView alloc] initWithFrame:rect];
+        self.maskView.image = [UIImage imageNamed:@"straighten-grid"];
+        [self.topView insertSubview:self.maskView aboveSubview:self.imageScrollView];
     }
     return _topView;
 }
 
 - (UICollectionView *)collectionView {
     if (_collectionView == nil) {
+        CGFloat colum = 4.0, spacing = 2.0;
+        CGFloat value = floorf((CGRectGetWidth(self.view.bounds) - (colum - 1) * spacing) / colum);
+        
         UICollectionViewFlowLayout *layout  = [[UICollectionViewFlowLayout alloc] init];
-        layout.itemSize                     = CGSizeMake(78, 78);
-        layout.sectionInset                 = UIEdgeInsetsMake(1.0, 2.0, 1.0, 2.0);
-        layout.minimumInteritemSpacing      = 1.0;
-        layout.minimumLineSpacing           = 1.0;
+        layout.itemSize                     = CGSizeMake(value, value);
+        layout.sectionInset                 = UIEdgeInsetsMake(0, 0, 0, 0);
+        layout.minimumInteritemSpacing      = spacing;
+        layout.minimumLineSpacing           = spacing;
         
         CGRect rect = CGRectMake(0, CGRectGetMaxY(self.topView.frame), CGRectGetWidth(self.view.bounds), CGRectGetHeight(self.view.bounds)-CGRectGetHeight(self.topView.bounds));
-        self.collectionView = [[UICollectionView alloc] initWithFrame:rect collectionViewLayout:layout];
-        self.collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        self.collectionView.dataSource = self;
-        self.collectionView.delegate = self;
-        self.collectionView.backgroundColor = [UIColor clearColor];
+        _collectionView = [[UICollectionView alloc] initWithFrame:rect collectionViewLayout:layout];
+        _collectionView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _collectionView.dataSource = self;
+        _collectionView.delegate = self;
+        _collectionView.backgroundColor = [UIColor clearColor];
         
-        [self.collectionView registerClass:[TWPhotoCollectionViewCell class] forCellWithReuseIdentifier:@"TWPhotoCollectionViewCell"];
+        [_collectionView registerClass:[TWPhotoCollectionViewCell class] forCellWithReuseIdentifier:@"TWPhotoCollectionViewCell"];
+        
+//        rect = CGRectMake(0, 0, 60, layout.sectionInset.top);
+//        UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+//        backBtn.frame = rect;
+//        [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+//        [backBtn addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
+//        [_collectionView addSubview:backBtn];
+//        
+//        rect = CGRectMake((CGRectGetWidth(_collectionView.bounds)-140)/2, 0, 140, layout.sectionInset.top);
+//        UILabel *titleLabel = [[UILabel alloc] initWithFrame:rect];
+//        titleLabel.text = @"CAMERA ROLL";
+//        titleLabel.textAlignment = NSTextAlignmentCenter;
+//        titleLabel.backgroundColor = [UIColor clearColor];
+//        titleLabel.textColor = [UIColor whiteColor];
+//        titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
+//        [_collectionView addSubview:titleLabel];
     }
     return _collectionView;
 }
 
 - (void)backAction {
     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+- (void)cropAction {
+    if (self.cropBlock) {
+        self.cropBlock(self.imageScrollView.capture);
+    }
+    [self backAction];
 }
 
 - (void)panGestureAction:(UIPanGestureRecognizer *)panGesture {
@@ -272,6 +311,13 @@
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    NSLog(@"velocity:%f", velocity.y);
+    if (velocity.y >= 2.0 && self.topView.frame.origin.y == 0) {
+        [self tapGestureAction:nil];
+    }
 }
 
 @end

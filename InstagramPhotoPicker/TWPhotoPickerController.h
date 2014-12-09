@@ -10,4 +10,6 @@
 
 @interface TWPhotoPickerController : UIViewController
 
+@property (nonatomic, copy) void(^cropBlock)(UIImage *image);
+
 @end
