@@ -34,7 +34,7 @@ With [CocoaPods](http://cocoapods.org/), add this line to your Podfile.
 
 ## Author
 
-- [wenzhaot](https://github.com/wenzhaot) ([@Wenzhao](https://twitter.com/Wenzhao))
+- [wenzhaot](https://github.com/wenzhaot) ([@Wenzhaot](https://twitter.com/Wenzhaot))
 
 ## License
 
