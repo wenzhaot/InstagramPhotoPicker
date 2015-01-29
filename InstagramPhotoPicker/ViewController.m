@@ -10,6 +10,7 @@
 #import "TWPhotoPickerController.h"
 
 @interface ViewController ()
+@property (strong, nonatomic) IBOutlet UIImageView *imageView;
 
 @end
 
@@ -29,6 +30,7 @@
     TWPhotoPickerController *photoPicker = [[TWPhotoPickerController alloc] init];
     photoPicker.cropBlock = ^(UIImage *image) {
         //do something
+        self.imageView.image = image;
     };
     [self presentViewController:photoPicker animated:YES completion:NULL];
 }
