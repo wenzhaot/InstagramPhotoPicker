@@ -78,7 +78,8 @@
         
         if (group == nil) {
             if (self.assets.count) {
-                UIImage *image = [UIImage imageWithCGImage:[[[self.assets objectAtIndex:0] defaultRepresentation] fullResolutionImage]];
+                ALAsset * asset = [self.assets objectAtIndex:0];
+                UIImage *image = [UIImage imageWithCGImage:asset.defaultRepresentation.fullResolutionImage scale:asset.defaultRepresentation.scale orientation:(UIImageOrientation)asset.defaultRepresentation.orientation];
                 [self.imageScrollView displayImage:image];
             }
             [self.collectionView reloadData];
@@ -307,7 +308,9 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    UIImage *image = [UIImage imageWithCGImage:[[[self.assets objectAtIndex:indexPath.row] defaultRepresentation] fullScreenImage]];
+
+    ALAsset * asset = [self.assets objectAtIndex:indexPath.row];
+    UIImage *image = [UIImage imageWithCGImage:asset.defaultRepresentation.fullResolutionImage scale:asset.defaultRepresentation.scale orientation:(UIImageOrientation)asset.defaultRepresentation.orientation];
     [self.imageScrollView displayImage:image];
     if (self.topView.frame.origin.y != 0) {
         [self tapGestureAction:nil];

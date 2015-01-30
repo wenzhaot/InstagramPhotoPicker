@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vXZ-lx-hvc">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
@@ -17,15 +17,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zHK-3R-mI0">
-                                <rect key="frame" x="242" y="285" width="117" height="30"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zET-HP-t12">
+                                <rect key="frame" x="150" y="28" width="300" height="300"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="SMb-Jd-tjQ"/>
-                                    <constraint firstAttribute="width" constant="117" id="qwo-19-hMi"/>
+                                    <constraint firstAttribute="height" constant="300" id="5Nn-nY-osb"/>
+                                    <constraint firstAttribute="width" constant="300" id="iqv-rn-ScT"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zHK-3R-mI0">
+                                <rect key="frame" x="242" y="386" width="117" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="117" id="I1b-Sn-TV6"/>
+                                    <constraint firstAttribute="width" constant="117" id="gRy-iB-gHq"/>
+                                    <constraint firstAttribute="height" constant="30" id="hFF-Md-dMd"/>
                                 </constraints>
                                 <state key="normal" title="Show Picker">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="I1b-Sn-TV6"/>
+                                    </mask>
+                                </variation>
                                 <connections>
                                     <action selector="showAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="tsF-q0-m7s"/>
                                 </connections>
@@ -33,10 +46,25 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="centerY" secondItem="zHK-3R-mI0" secondAttribute="centerY" id="QSM-h2-hOJ"/>
-                            <constraint firstAttribute="centerX" secondItem="zHK-3R-mI0" secondAttribute="centerX" id="TtS-kk-sPV"/>
+                            <constraint firstItem="zHK-3R-mI0" firstAttribute="bottom" secondItem="zET-HP-t12" secondAttribute="bottom" constant="88" id="Aje-5w-jBF"/>
+                            <constraint firstItem="zET-HP-t12" firstAttribute="centerX" secondItem="zHK-3R-mI0" secondAttribute="centerX" id="EQL-69-UYl"/>
+                            <constraint firstItem="zHK-3R-mI0" firstAttribute="top" secondItem="zET-HP-t12" secondAttribute="bottom" constant="82" id="MLo-dF-hLf"/>
+                            <constraint firstItem="zET-HP-t12" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="8" symbolic="YES" id="bed-ZP-1Gg"/>
+                            <constraint firstItem="zET-HP-t12" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="8" id="iIn-jD-JfM"/>
+                            <constraint firstAttribute="centerX" secondItem="zET-HP-t12" secondAttribute="centerX" id="pVB-Oa-PnH"/>
+                            <constraint firstItem="zHK-3R-mI0" firstAttribute="centerX" secondItem="zET-HP-t12" secondAttribute="centerX" id="w3W-H6-UwQ"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="EQL-69-UYl"/>
+                                <exclude reference="iIn-jD-JfM"/>
+                                <exclude reference="MLo-dF-hLf"/>
+                            </mask>
+                        </variation>
                     </view>
+                    <connections>
+                        <outlet property="imageView" destination="zET-HP-t12" id="ftS-z4-lTB"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
