@@ -7,6 +7,7 @@
 //
 
 #import "TWImageScrollView.h"
+#define rad(angle) ((angle) / 180.0 * M_PI)
 
 @interface TWImageScrollView ()<UIScrollViewDelegate>
 {
@@ -55,15 +56,59 @@
     self.imageView.frame = frameToCenter;
 }
 
-- (UIImage *)capture {
-    UIGraphicsBeginImageContextWithOptions(self.frame.size, NO, [UIScreen mainScreen].scale);
-    
-    [self drawViewHierarchyInRect:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height) afterScreenUpdates:YES];
-    
-    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return image;
+/**
+ *  cropping image not just snapshot , inpired by https://github.com/gekitz/GKImagePicker
+ *
+ *  @return image cropped
+ */
+- (UIImage *)capture
+{
+
+    CGRect visibleRect = [self _calcVisibleRectForCropArea];//caculate visible rect for crop
+    CGAffineTransform rectTransform = [self _orientationTransformedRectOfImage:self.imageView.image];//if need rotate caculate
+    visibleRect = CGRectApplyAffineTransform(visibleRect, rectTransform);
+
+    CGImageRef ref = CGImageCreateWithImageInRect([self.imageView.image CGImage], visibleRect);//crop
+    UIImage* cropped = [[UIImage alloc] initWithCGImage:ref scale:self.imageView.image.scale orientation:self.imageView.image.imageOrientation] ;
+    return cropped;
 }
+
+
+static CGRect TWScaleRect(CGRect rect, CGFloat scale)
+{
+    return CGRectMake(rect.origin.x * scale, rect.origin.y * scale, rect.size.width * scale, rect.size.height * scale);
+}
+
+
+-(CGRect)_calcVisibleRectForCropArea{
+
+    CGFloat sizeScale = self.imageView.image.size.width / self.imageView.frame.size.width;
+    sizeScale *= self.zoomScale;
+    CGRect visibleRect = [self convertRect:self.bounds toView:self.imageView];
+    return visibleRect = TWScaleRect(visibleRect, sizeScale);
+}
+
+- (CGAffineTransform)_orientationTransformedRectOfImage:(UIImage *)img
+{
+    CGAffineTransform rectTransform;
+    switch (img.imageOrientation)
+    {
+        case UIImageOrientationLeft:
+            rectTransform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(rad(90)), 0, -img.size.height);
+            break;
+        case UIImageOrientationRight:
+            rectTransform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(rad(-90)), -img.size.width, 0);
+            break;
+        case UIImageOrientationDown:
+            rectTransform = CGAffineTransformTranslate(CGAffineTransformMakeRotation(rad(-180)), -img.size.width, -img.size.height);
+            break;
+        default:
+            rectTransform = CGAffineTransformIdentity;
+    };
+    
+    return CGAffineTransformScale(rectTransform, img.scale, img.scale);
+}
+
 
 - (void)displayImage:(UIImage *)image
 {
