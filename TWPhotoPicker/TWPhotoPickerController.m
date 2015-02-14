@@ -115,7 +115,8 @@
         rect = CGRectMake(0, 0, 60, CGRectGetHeight(navView.bounds));
         UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         backBtn.frame = rect;
-        [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
+        [backBtn setImage:[UIImage imageNamed:@"TWPhotoPicker.bundle/back.png"]
+                 forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
         [navView addSubview:backBtn];
         
@@ -142,7 +143,7 @@
         dragView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [self.topView addSubview:dragView];
         
-        UIImage *img = [UIImage imageNamed:@"cameraroll-picker-grip"];
+        UIImage *img = [UIImage imageNamed:@"TWPhotoPicker.bundle/cameraroll-picker-grip.png"];
         rect = CGRectMake((CGRectGetWidth(dragView.bounds)-img.size.width)/2, (CGRectGetHeight(dragView.bounds)-img.size.height)/2, img.size.width, img.size.height);
         UIImageView *gripView = [[UIImageView alloc] initWithFrame:rect];
         gripView.image = img;
@@ -162,7 +163,8 @@
         [self.topView sendSubviewToBack:self.imageScrollView];
         
         self.maskView = [[UIImageView alloc] initWithFrame:rect];
-        self.maskView.image = [UIImage imageNamed:@"straighten-grid"];
+        
+        self.maskView.image = [UIImage imageNamed:@"TWPhotoPicker.bundle/straighten-grid.png"];
         [self.topView insertSubview:self.maskView aboveSubview:self.imageScrollView];
     }
     return _topView;

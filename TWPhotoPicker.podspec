@@ -15,12 +15,10 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.requires_arc = true
 
-  s.source_files  = "InstagramPhotoPicker/TWPhotoPickerController.{h,m}",
-                    "InstagramPhotoPicker/TWPhotoCollectionViewCell.{h,m}",
-                    "InstagramPhotoPicker/TWImageScrollView.{h,m}"
+  s.source_files  = "TWPhotoPicker/*.{h,m}"
 
   s.frameworks = "Foundation", "CoreGraphics", "UIKit"
 
-  s.ios.resource_bundle = { 'TWPhotoPicker' => "InstagramPhotoPicker/Resources.xcassets/**/*.png" }
+  s.ios.resource_bundle = { 'TWPhotoPicker' => "TWPhotoPicker/Resources/*.png" }
 
 end
