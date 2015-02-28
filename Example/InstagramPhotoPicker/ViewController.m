@@ -28,10 +28,12 @@
 
 - (IBAction)showAction:(id)sender {
     TWPhotoPickerController *photoPicker = [[TWPhotoPickerController alloc] init];
+    
     photoPicker.cropBlock = ^(UIImage *image) {
         //do something
         self.imageView.image = image;
     };
+    
     [self presentViewController:photoPicker animated:YES completion:NULL];
 }
 
