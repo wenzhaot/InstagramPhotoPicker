@@ -34,7 +34,10 @@
         self.imageView.image = image;
     };
     
-    [self presentViewController:photoPicker animated:YES completion:NULL];
+    UINavigationController *navCon = [[UINavigationController alloc] initWithRootViewController:photoPicker];
+    [navCon setNavigationBarHidden:YES];
+    
+    [self presentViewController:navCon animated:YES completion:NULL];
 }
 
 @end
