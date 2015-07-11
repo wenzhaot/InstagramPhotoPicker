@@ -18,7 +18,9 @@ Pod::Spec.new do |s|
   s.source_files  = "TWPhotoPicker/*.{h,m}"
 
   s.frameworks = "Foundation", "CoreGraphics", "UIKit"
-
-  s.resource_bundles = { 'TWPhotoPicker' => "TWPhotoPicker/Resources/*.png" }
+  
+  s.resource_bundles = {
+    'TWPhotoPicker' => ['TWPhotoPicker/Resources/*']
+  }
 
 end
