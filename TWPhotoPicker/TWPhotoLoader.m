@@ -28,6 +28,8 @@
 }
 
 + (void)loadAllPhotos:(void (^)(NSArray *photos, NSError *error))completion {
+
+    [[TWPhotoLoader sharedLoader].allPhotos removeAllObjects]; /* added this line to remove assets duplication*/
     [[TWPhotoLoader sharedLoader] setLoadBlock:completion];
     [[TWPhotoLoader sharedLoader] startLoading];
 }
