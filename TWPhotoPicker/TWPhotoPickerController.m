@@ -182,6 +182,7 @@
 - (UIView *)topView {
     if (_topView == nil) {
         CGFloat handleHeight = 44.0f;
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
         CGRect rect = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetWidth(self.view.bounds)+handleHeight*2);
         self.topView = [[UIView alloc] initWithFrame:rect];
         self.topView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
@@ -196,7 +197,7 @@
         rect = CGRectMake(0, 0, 60, CGRectGetHeight(navView.bounds));
         UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         backBtn.frame = rect;
-        [backBtn setImage:[UIImage imageNamed:@"TWPhotoPicker.bundle/back.png"]
+        [backBtn setImage:[UIImage imageNamed:@"back.png" inBundle:bundle compatibleWithTraitCollection:nil]
                  forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
         [navView addSubview:backBtn];
@@ -224,7 +225,7 @@
         dragView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [self.topView addSubview:dragView];
         
-        UIImage *img = [UIImage imageNamed:@"TWPhotoPicker.bundle/cameraroll-picker-grip.png"];
+        UIImage *img = [UIImage imageNamed:@"cameraroll-picker-grip.png" inBundle:bundle compatibleWithTraitCollection:nil];
         rect = CGRectMake((CGRectGetWidth(dragView.bounds)-img.size.width)/2, (CGRectGetHeight(dragView.bounds)-img.size.height)/2, img.size.width, img.size.height);
         UIImageView *gripView = [[UIImageView alloc] initWithFrame:rect];
         gripView.image = img;
@@ -245,7 +246,7 @@
         
         self.maskView = [[UIImageView alloc] initWithFrame:rect];
         
-        self.maskView.image = [UIImage imageNamed:@"TWPhotoPicker.bundle/straighten-grid.png"];
+        self.maskView.image = [UIImage imageNamed:@"straighten-grid.png" inBundle:bundle compatibleWithTraitCollection:nil];
         [self.topView insertSubview:self.maskView aboveSubview:self.imageScrollView];
     }
     return _topView;
