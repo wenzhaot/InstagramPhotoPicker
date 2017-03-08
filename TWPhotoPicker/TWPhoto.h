@@ -1,13 +1,13 @@
 
 
 #import <UIKit/UIKit.h>
-#import <AssetsLibrary/AssetsLibrary.h>
+@import Photos;
 
 @interface TWPhoto : NSObject
 
 @property (nonatomic, readonly) UIImage *thumbnailImage;
 @property (nonatomic, readonly) UIImage *originalImage;
 
-@property (nonatomic, strong) ALAsset *asset;
+@property (nonatomic, strong)   PHAsset *asset;
 
 @end

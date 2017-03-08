@@ -8,17 +8,18 @@
 
 #import "TWPhotoPickerController.h"
 #import "TWPhotoCollectionViewCell.h"
+#import "TWPhotoAlbumListController.h"
 #import "TWImageScrollView.h"
 #import "TWPhotoLoader.h"
 
-@interface TWPhotoPickerController ()<UICollectionViewDataSource, UICollectionViewDelegate> {
+@interface TWPhotoPickerController ()<UICollectionViewDataSource, UICollectionViewDelegate, PhotoAlbumDelegate> {
     CGFloat beginOriginY;
 }
 @property (strong, nonatomic) UIView *topView;
 @property (strong, nonatomic) UIImageView *maskView;
 @property (strong, nonatomic) UICollectionView *collectionView;
 @property (strong, nonatomic) TWImageScrollView *imageScrollView;
-
+@property (strong, nonatomic) TWPhotoAlbumListController *photoAlbumListVC;
 @property (strong, nonatomic) NSArray *allPhotos;
 @end
 
@@ -39,8 +40,6 @@
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
-
-
 
 #pragma mark - UICollectionViewDataSource
 
@@ -160,7 +159,7 @@
 #pragma mark - private methods
 
 - (void)loadPhotos {
-    [TWPhotoLoader loadAllPhotos:^(NSArray *photos, NSError *error) {
+    [[TWPhotoLoader sharedLoader] loadAllPhotos:^(NSArray *photos, NSError *error) {
         if (!error) {
             self.allPhotos = [NSArray arrayWithArray:photos];
             if (self.allPhotos.count) {
@@ -175,13 +174,11 @@
     
 }
 
-
-
 #pragma mark - getters & setters
 
 - (UIView *)topView {
     if (_topView == nil) {
-        CGFloat handleHeight = 44.0f;
+        CGFloat handleHeight = 60.0f;
         NSBundle *bundle = [NSBundle bundleForClass:[self class]];
         CGRect rect = CGRectMake(0, 0, CGRectGetWidth(self.view.bounds), CGRectGetWidth(self.view.bounds)+handleHeight*2);
         self.topView = [[UIView alloc] initWithFrame:rect];
@@ -191,37 +188,53 @@
         
         rect = CGRectMake(0, 0, CGRectGetWidth(self.topView.bounds), handleHeight);
         UIView *navView = [[UIView alloc] initWithFrame:rect];//26 29 33
-        navView.backgroundColor = [[UIColor colorWithRed:26.0/255 green:29.0/255 blue:33.0/255 alpha:1] colorWithAlphaComponent:.8f];
+        navView.backgroundColor = [UIColor whiteColor];
         [self.topView addSubview:navView];
         
         rect = CGRectMake(0, 0, 60, CGRectGetHeight(navView.bounds));
         UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         backBtn.frame = rect;
-        [backBtn setImage:[UIImage imageNamed:@"back.png" inBundle:bundle compatibleWithTraitCollection:nil]
+        [backBtn setImage:[UIImage imageNamed:@"close" inBundle:bundle compatibleWithTraitCollection:nil]
                  forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
         [navView addSubview:backBtn];
         
-        rect = CGRectMake((CGRectGetWidth(navView.bounds)-100)/2, 0, 100, CGRectGetHeight(navView.bounds));
+        rect = CGRectMake((CGRectGetWidth(navView.bounds)-140)/2, 0, 150, CGRectGetHeight(navView.bounds));
+        // Attach image
+        NSTextAttachment *attachment = [[NSTextAttachment alloc] init];
+        attachment.image = [UIImage imageNamed:@"keyboard_arrow_down"];
+        CGFloat offsetY = -7.0;
+        attachment.bounds = CGRectMake(0, offsetY, attachment.image.size.width, attachment.image.size.height);
+        NSAttributedString *attachmentString = [NSAttributedString attributedStringWithAttachment:attachment];
+        NSMutableAttributedString *myString= [[NSMutableAttributedString alloc] initWithString:@"Photo Album"];
+        [myString appendAttributedString:attachmentString];
+        //
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:rect];
-        titleLabel.text = @"SELECT";
         titleLabel.textAlignment = NSTextAlignmentCenter;
+        titleLabel.contentMode   = UIViewContentModeCenter;
         titleLabel.backgroundColor = [UIColor clearColor];
-        titleLabel.textColor = [UIColor whiteColor];
+        titleLabel.textColor = [UIColor blackColor];
         titleLabel.font = [UIFont boldSystemFontOfSize:18.0f];
+        titleLabel.attributedText = myString;
         [navView addSubview:titleLabel];
         
+        // Add tap gesture to title label
+        UITapGestureRecognizer *tapGensture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(animatePhotoAlbumList:)];
+        tapGensture.numberOfTapsRequired = 1;
+        [titleLabel setUserInteractionEnabled:YES];
+        [titleLabel addGestureRecognizer:tapGensture];
+        //
         rect = CGRectMake(CGRectGetWidth(navView.bounds)-80, 0, 80, CGRectGetHeight(navView.bounds));
         UIButton *cropBtn = [[UIButton alloc] initWithFrame:rect];
-        [cropBtn setTitle:@"OK" forState:UIControlStateNormal];
-        [cropBtn.titleLabel setFont:[UIFont systemFontOfSize:14.0f]];
-        [cropBtn setTitleColor:[UIColor cyanColor] forState:UIControlStateNormal];
+        [cropBtn setTitle:@"Done" forState:UIControlStateNormal];
+        [cropBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
+        [cropBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [cropBtn addTarget:self action:@selector(cropAction) forControlEvents:UIControlEventTouchUpInside];
         [navView addSubview:cropBtn];
         
         rect = CGRectMake(0, CGRectGetHeight(self.topView.bounds)-handleHeight, CGRectGetWidth(self.topView.bounds), handleHeight);
         UIView *dragView = [[UIView alloc] initWithFrame:rect];
-        dragView.backgroundColor = navView.backgroundColor;
+        dragView.backgroundColor = [UIColor lightGrayColor];
         dragView.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
         [self.topView addSubview:dragView];
         
@@ -273,6 +286,46 @@
         [_collectionView registerClass:[TWPhotoCollectionViewCell class] forCellWithReuseIdentifier:@"TWPhotoCollectionViewCell"];
     }
     return _collectionView;
+}
+
+-(void)animatePhotoAlbumList:(id)sender {
+    if (!_photoAlbumListVC) {
+        TWPhotoAlbumListController *photoAlbumListVC = [[TWPhotoAlbumListController alloc] initWithNibName:@"TWPhotoAlbumListController" bundle:nil];
+        photoAlbumListVC.view.frame = CGRectMake(0, 60.0f, self.view.bounds.size.width, self.view.bounds.size.height - 60.0f);
+        photoAlbumListVC.delegate = self;
+        self.photoAlbumListVC = photoAlbumListVC;
+    }
+    [self displayContentController:self.photoAlbumListVC];
+}
+
+- (void)displayContentController:(UIViewController*) content {
+    // Animation object
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.5;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionFade;
+    
+    // Decide to animate from top or bottom
+    if(![content.view isDescendantOfView:self.view]) {
+        transition.subtype = kCATransitionFromTop;
+        [self addChildViewController:content];
+        [self.view addSubview:content.view];
+        [content didMoveToParentViewController:self];
+    } else {
+        transition.subtype = kCATransitionFromBottom;
+        [content willMoveToParentViewController:nil];
+        [content.view removeFromSuperview];
+        [content removeFromParentViewController];
+    }
+    [content.view.layer addAnimation:transition forKey:kCATransition];
+}
+
+#pragma mark Photo album delegate
+
+-(void)didFinishWithAlbumSelection:(PHAssetCollection *)selectedAlbum {
+    [[TWPhotoLoader sharedLoader] setAssetsCollection:selectedAlbum];
+    [self loadPhotos];
+    [self displayContentController:self.photoAlbumListVC];
 }
 
 @end

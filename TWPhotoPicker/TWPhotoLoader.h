@@ -10,7 +10,10 @@
 #import "TWPhoto.h"
 
 @interface TWPhotoLoader : NSObject
+@property (strong, nonatomic) PHAssetCollection *assetsCollection;
 
-+ (void)loadAllPhotos:(void (^)(NSArray *photos, NSError *error))completion;
+//
++ (TWPhotoLoader *)sharedLoader;
+- (void)loadAllPhotos:(void (^)(NSArray *photos, NSError *error))completion;
 
 @end
