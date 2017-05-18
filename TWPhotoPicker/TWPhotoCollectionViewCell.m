@@ -14,7 +14,7 @@
     if (self = [super initWithFrame:frame]) {
         self.imageView = [[UIImageView alloc] initWithFrame:self.bounds];
         self.imageView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        self.imageView.layer.borderColor = [UIColor blueColor].CGColor;
+        self.imageView.layer.borderColor = [UIColor whiteColor].CGColor;
         [self.contentView addSubview:self.imageView];
     }
     return self;
